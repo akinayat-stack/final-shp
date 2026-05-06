@@ -1,9 +1,0 @@
-plugins {
-    id 'application'
-}
-
-sourceSets.main.java.srcDirs = ['src/main/java']
-
-application {
-    mainClass = 'com.finalshp.memory.desktop.DesktopLauncher'
-}
