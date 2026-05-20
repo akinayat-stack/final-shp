@@ -1,4 +1,8 @@
 package com.alice.ai;
 
-public class GuardBehavior {
+import com.alice.screens.GameScreen;
+import com.badlogic.ashley.core.Entity;
+
+public interface GuardBehavior {
+    void update(float delta, Entity guard, GameScreen screen);
 }
