@@ -8,6 +8,7 @@ public class TextureComponent implements Component, Pool.Poolable {
     public Texture texture;
     public Texture idleTexture;
     public Texture walkTexture;
+    public Texture backTexture;   // используется когда игрок идёт вперёд (W/UP)
     public boolean flipX = false;
     public boolean lastFlipX = false;
     public float renderWidth = 64f;
@@ -22,6 +23,7 @@ public class TextureComponent implements Component, Pool.Poolable {
         texture = null;
         idleTexture = null;
         walkTexture = null;
+        backTexture = null;
         flipX = false;
         lastFlipX = false;
         renderWidth = 64f;

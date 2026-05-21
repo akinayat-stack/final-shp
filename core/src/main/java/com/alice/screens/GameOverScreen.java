@@ -2,38 +2,54 @@ package com.alice.screens;
 
 import com.alice.AliceGame;
 import com.alice.utils.Constants;
-import com.alice.utils.UIButton;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 public class GameOverScreen implements Screen {
     private final AliceGame game;
     private final int level;
     private final OrthographicCamera camera;
-    private final ShapeRenderer shapes;
-    private final UIButton btnRetry, btnMenu;
+    private final Texture bg;
+    private final Texture btnRetryTex, btnMenuTex;
+    private final Rectangle btnRetry, btnMenu;
     private final Vector3 mouseWorld;
-    private final Texture gameOverImg;
+
+    // Размеры и расположение кнопок (горизонтально)
+    private static final float BUTTON_WIDTH = 200f;
+    private static final float BUTTON_GAP = 40f;
+    private static final float BUTTON_Y = 120f;   // высота от низа экрана (чтобы не перекрывать лежащую Алису)
 
     public GameOverScreen(AliceGame game, int level) {
         this.game = game;
         this.level = level;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Constants.VIEWPORT_W, Constants.VIEWPORT_H);
-        shapes = new ShapeRenderer();
-        gameOverImg = game.assets.get("game_over.png", Texture.class);
-        btnRetry = new UIButton(300, 110, 200, 50, "TRY AGAIN");
-        btnMenu = new UIButton(300, 45, 200, 50, "MAIN MENU");
+        bg = game.assets.get("game_over.png", Texture.class);
+        btnRetryTex = game.assets.get("try_again.png", Texture.class);
+        btnMenuTex = game.assets.get("main_menu.png", Texture.class);
+
+        // Высота кнопок с сохранением пропорций
+        float retryH = BUTTON_WIDTH * (btnRetryTex.getHeight() / (float) btnRetryTex.getWidth());
+        float menuH = BUTTON_WIDTH * (btnMenuTex.getHeight() / (float) btnMenuTex.getWidth());
+
+        // Горизонтальное расположение: кнопки рядом
+        float totalWidth = BUTTON_WIDTH + BUTTON_GAP + BUTTON_WIDTH;
+        float startX = (Constants.VIEWPORT_W - totalWidth) / 2f;
+
+        btnRetry = new Rectangle(startX, BUTTON_Y, BUTTON_WIDTH, retryH);
+        btnMenu = new Rectangle(startX + BUTTON_WIDTH + BUTTON_GAP, BUTTON_Y, BUTTON_WIDTH, menuH);
+
         mouseWorld = new Vector3();
     }
 
-    @Override public void show() {}
+    @Override
+    public void show() {}
 
     @Override
     public void render(float delta) {
@@ -48,43 +64,48 @@ public class GameOverScreen implements Screen {
 
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        game.batch.draw(gameOverImg, 0, 0, Constants.VIEWPORT_W, Constants.VIEWPORT_H);
+        game.batch.draw(bg, 0, 0, Constants.VIEWPORT_W, Constants.VIEWPORT_H);
         game.batch.end();
 
-        shapes.setProjectionMatrix(camera.combined);
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        btnRetry.drawFill(shapes, btnRetry.contains(mouseWorld.x, mouseWorld.y));
-        btnMenu.drawFill(shapes, btnMenu.contains(mouseWorld.x, mouseWorld.y));
-        shapes.end();
+        boolean hoverRetry = btnRetry.contains(mouseWorld.x, mouseWorld.y);
+        boolean hoverMenu = btnMenu.contains(mouseWorld.x, mouseWorld.y);
 
-        shapes.begin(ShapeRenderer.ShapeType.Line);
-        btnRetry.drawOutline(shapes);
-        btnMenu.drawOutline(shapes);
-        shapes.end();
-
+        // Отрисовка кнопок с лёгким увеличением при наведении
         game.batch.begin();
-        game.font.getData().setScale(1.0f);
-        game.font.setColor(1f, 0.6f, 0.6f, 1f);
-        game.font.draw(game.batch, "Level " + level + " failed", 340, 195);
+        if (hoverRetry) {
+            game.batch.draw(btnRetryTex, btnRetry.x - 5, btnRetry.y - 5, btnRetry.width + 10, btnRetry.height + 10);
+        } else {
+            game.batch.draw(btnRetryTex, btnRetry.x, btnRetry.y, btnRetry.width, btnRetry.height);
+        }
+        if (hoverMenu) {
+            game.batch.draw(btnMenuTex, btnMenu.x - 5, btnMenu.y - 5, btnMenu.width + 10, btnMenu.height + 10);
+        } else {
+            game.batch.draw(btnMenuTex, btnMenu.x, btnMenu.y, btnMenu.width, btnMenu.height);
+        }
+        game.batch.end();
 
-        btnRetry.drawLabel(game.batch, game.font);
-        btnMenu.drawLabel(game.batch, game.font);
-
-        game.font.getData().setScale(0.8f);
-        game.font.setColor(0.9f, 0.9f, 0.9f, 0.9f);
+        // Подсказка по клавишам (опционально)
+        game.batch.begin();
+        game.font.getData().setScale(0.7f);
+        game.font.setColor(1, 1, 1, 0.7f);
         game.font.draw(game.batch, "[R] Retry    [M] Menu", 330, 25);
         game.font.getData().setScale(1.2f);
         game.batch.end();
 
+        // Обработка кликов
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             if (btnRetry.contains(mouseWorld.x, mouseWorld.y)) {
                 game.setScreen(new GameScreen(game, level, 0, Constants.PLAYER_LIVES));
-                dispose(); return;
+                dispose();
+                return;
             } else if (btnMenu.contains(mouseWorld.x, mouseWorld.y)) {
                 game.setScreen(new MenuScreen(game));
-                dispose(); return;
+                dispose();
+                return;
             }
         }
+
+        // Клавиши
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             game.setScreen(new GameScreen(game, level, 0, Constants.PLAYER_LIVES));
             dispose();
@@ -94,9 +115,18 @@ public class GameOverScreen implements Screen {
         }
     }
 
-    @Override public void resize(int width, int height) {}
-    @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void hide() {}
-    @Override public void dispose() { shapes.dispose(); }
+    @Override
+    public void resize(int width, int height) {}
+
+    @Override
+    public void pause() {}
+
+    @Override
+    public void resume() {}
+
+    @Override
+    public void hide() {}
+
+    @Override
+    public void dispose() {}
 }

@@ -15,10 +15,9 @@ public class Valet {
         p.x = x; p.y = y;
         VelocityComponent v = engine.createComponent(VelocityComponent.class);
         TextureComponent t = engine.createComponent(TextureComponent.class);
-        Texture tex = assets.get("valet_walk.png", Texture.class);
-        t.texture = tex;
-        t.walkTexture = tex;
-        t.idleTexture = tex;
+        t.walkTexture = assets.get("valet_walk.png", Texture.class);
+        t.idleTexture = assets.get("valet_idle.png", Texture.class);
+        t.texture = t.idleTexture;
         t.renderWidth = Constants.VALET_SIZE;
         t.renderHeight = Constants.VALET_SIZE;
         CollisionComponent c = engine.createComponent(CollisionComponent.class);

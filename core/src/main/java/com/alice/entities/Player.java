@@ -14,8 +14,9 @@ public class Player {
         p.x = x; p.y = y;
         VelocityComponent v = engine.createComponent(VelocityComponent.class);
         TextureComponent t = engine.createComponent(TextureComponent.class);
-        t.idleTexture = assets.get("alice_idle.png", Texture.class);
-        t.walkTexture = assets.get("alice_walk.png", Texture.class);
+        t.idleTexture  = assets.get("alice_idle.png",  Texture.class);
+        t.walkTexture  = assets.get("alice_walk.png",  Texture.class);
+        t.backTexture  = assets.get("alice_back.png",  Texture.class);
         t.texture = t.idleTexture;
         t.renderWidth = Constants.PLAYER_SIZE;
         t.renderHeight = Constants.PLAYER_SIZE;

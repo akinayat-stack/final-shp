@@ -1,13 +1,18 @@
 package com.alice.screens;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.alice.AliceGame;
-import com.alice.components.*;
-import com.alice.entities.Guard;
+import com.alice.components.PositionComponent;
 import com.alice.entities.Player;
 import com.alice.entities.Valet;
 import com.alice.map.MapData;
 import com.alice.map.MapRenderer;
-import com.alice.systems.*;
+import com.alice.systems.AISystem;
+import com.alice.systems.CameraSystem;
+import com.alice.systems.CollisionSystem;
+import com.alice.systems.RenderSystem;
 import com.alice.utils.Constants;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
@@ -17,12 +22,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GameScreen implements Screen {
     public final AliceGame game;
@@ -38,7 +39,8 @@ public class GameScreen implements Screen {
     public Vector2 exitPos = new Vector2();
     public List<Vector2> keyPositions = new ArrayList<>();
     public List<Boolean> keyCollected = new ArrayList<>();
-    public List<Entity> guards = new ArrayList<>();
+    // guards убраны — на всех уровнях только valet
+    public List<Entity> guards = new ArrayList<>();  // оставляем пустым для совместимости с RenderSystem
     public Entity valet;
     public Entity player;
     public Player playerLogic;
@@ -72,16 +74,26 @@ public class GameScreen implements Screen {
                 float wx = c * Constants.TILE_SIZE;
                 float wy = (rows - 1 - r) * Constants.TILE_SIZE;
                 int t = map[r][c];
-                if (t == 2) {
-                    keyPositions.add(new Vector2(wx, wy));
-                    keyCollected.add(false);
-                } else if (t == 3) {
-                    exitPos.set(wx, wy);
-                } else if (t == 5) {
-                    Entity g = Guard.create(engine, game.assets, wx, wy);
-                    guards.add(g);
-                } else if (t == 6) {
-                    valet = Valet.create(engine, game.assets, wx, wy);
+                switch (t) {
+                    case 2:
+                        keyPositions.add(new Vector2(wx, wy));
+                        keyCollected.add(false);
+                        break;
+                    case 3:
+                        exitPos.set(wx, wy);
+                        break;
+                    case 6:
+                        // Создаём нескольких валетов; если valet уже создан — создаём ещё один и добавляем в guards
+                        // для совместимости с RenderSystem (индикаторы погони)
+                        Entity v = Valet.create(engine, game.assets, wx, wy);
+                        if (valet == null) {
+                            valet = v;
+                        } else {
+                            guards.add(v);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }
