@@ -15,10 +15,14 @@ public class Valet {
         p.x = x; p.y = y;
         VelocityComponent v = engine.createComponent(VelocityComponent.class);
         TextureComponent t = engine.createComponent(TextureComponent.class);
-        t.walkTexture = assets.get("valet_walk.png", Texture.class);
-        t.idleTexture = assets.get("valet_idle.png", Texture.class);
-        t.texture = t.idleTexture;
-        t.renderWidth = Constants.VALET_SIZE;
+        // Спрайтшиты валета (2 кадра в ряд)
+        t.walkFrontSheet = assets.get("valet_walk_front.png", Texture.class);
+        t.walkBackSheet  = assets.get("valet_walk_back.png",  Texture.class);
+        t.walkLeftSheet  = assets.get("valet_walk_left.png",  Texture.class);
+        t.walkRightSheet = assets.get("valet_walk_right.png", Texture.class);
+        t.texture = t.walkFrontSheet;
+        t.direction = TextureComponent.Direction.DOWN;
+        t.renderWidth  = Constants.VALET_SIZE;
         t.renderHeight = Constants.VALET_SIZE;
         CollisionComponent c = engine.createComponent(CollisionComponent.class);
         float pad = (Constants.VALET_SIZE - Constants.VALET_COLLISION) / 2f;

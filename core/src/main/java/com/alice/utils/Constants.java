@@ -3,11 +3,11 @@ package com.alice.utils;
 public final class Constants {
     public static final float TILE_SIZE = 64f;
 
-    public static final float PLAYER_SIZE      = 128f;   // было 80 — увеличено
+    public static final float PLAYER_SIZE      = 80f;   // было 80 — увеличено
     public static final float PLAYER_COLLISION = 48f;
     public static final float GUARD_SIZE       = 80f;
     public static final float GUARD_COLLISION  = 48f;
-    public static final float VALET_SIZE       = 120f;
+    public static final float VALET_SIZE       = 80f;
     public static final float VALET_COLLISION  = 64f;
     public static final float KEY_SIZE         = 40f;
     public static final float HEART_SIZE       = 40f;

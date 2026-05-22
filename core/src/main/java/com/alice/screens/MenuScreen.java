@@ -84,7 +84,7 @@ public class MenuScreen implements Screen {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             if (btnNew.contains(mouseWorld.x, mouseWorld.y)) {
                 game.saveManager.reset();
-                game.setScreen(new GameScreen(game, 1, 0, Constants.PLAYER_LIVES));
+                game.setScreen(new Level1IntroScreen(game));
                 dispose();
             } else if (btnExit.contains(mouseWorld.x, mouseWorld.y)) {
                 Gdx.app.exit();
