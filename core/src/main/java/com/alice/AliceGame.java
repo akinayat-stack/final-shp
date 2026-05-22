@@ -42,6 +42,8 @@ public class AliceGame extends Game {
         assets.load("bg_menu.png",   Texture.class);
         assets.load("heart.png",     Texture.class);
         assets.load("key.png",       Texture.class);
+        assets.load("rose.png",      Texture.class);
+        assets.load("card.png",      Texture.class);
         assets.load("floor.png",     Texture.class);
         assets.load("wall.png",      Texture.class);
         assets.load("portal.png",    Texture.class);

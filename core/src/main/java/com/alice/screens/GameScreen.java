@@ -14,6 +14,7 @@ import com.alice.systems.CameraSystem;
 import com.alice.systems.CollisionSystem;
 import com.alice.systems.RenderSystem;
 import com.alice.utils.Constants;
+import com.alice.utils.ItemType;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
@@ -22,6 +23,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -33,24 +35,26 @@ public class GameScreen implements Screen {
     public final MapRenderer mapRenderer;
 
     public int level;
-    public int keysCollected;
+    public ItemType currentItemType;
+    public Texture itemTexture;
+    public int itemsCollected;
     public int lives;
     public int[][] map;
     public Vector2 exitPos = new Vector2();
-    public List<Vector2> keyPositions = new ArrayList<>();
-    public List<Boolean> keyCollected = new ArrayList<>();
+    public List<Vector2> itemPositions = new ArrayList<>();
+    public List<Boolean> itemCollected = new ArrayList<>();
     // guards убраны — на всех уровнях только valet
     public List<Entity> guards = new ArrayList<>();  // оставляем пустым для совместимости с RenderSystem
     public Entity valet;
     public Entity player;
     public Player playerLogic;
-    public float keyBobTime = 0f;
+    public float itemBobTime = 0f;
     public boolean paused = false;
 
     public GameScreen(AliceGame game, int level, int keys, int lives) {
         this.game = game;
         this.level = level;
-        this.keysCollected = keys;
+        this.itemsCollected = keys;
         this.lives = lives;
         engine = new PooledEngine();
         worldCam = new OrthographicCamera();
@@ -58,6 +62,13 @@ public class GameScreen implements Screen {
         hudCam = new OrthographicCamera();
         hudCam.setToOrtho(false, Constants.VIEWPORT_W, Constants.VIEWPORT_H);
         map = MapData.getLevel(level);
+        switch (level) {
+            case 1: currentItemType = ItemType.KEY; break;
+            case 2: currentItemType = ItemType.ROSE; break;
+            case 3: currentItemType = ItemType.CARD; break;
+            default: currentItemType = ItemType.KEY;
+        }
+        itemTexture = game.assets.get(currentItemType.texturePath, Texture.class);
         mapRenderer = new MapRenderer(game.assets, map, level);
         loadEntities();
         engine.addSystem(new CollisionSystem(map, this));
@@ -76,8 +87,8 @@ public class GameScreen implements Screen {
                 int t = map[r][c];
                 switch (t) {
                     case 2:
-                        keyPositions.add(new Vector2(wx, wy));
-                        keyCollected.add(false);
+                        itemPositions.add(new Vector2(wx, wy));
+                        itemCollected.add(false);
                         break;
                     case 3:
                         exitPos.set(wx, wy);
@@ -126,9 +137,9 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (!paused) {
-            keyBobTime += delta;
+            itemBobTime += delta;
             engine.update(delta);
-            checkKeyPickup();
+            checkItemPickup();
             checkExit();
             checkGameOver();
         } else {
@@ -137,34 +148,38 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void checkKeyPickup() {
+    private void checkItemPickup() {
         PositionComponent pp = player.getComponent(PositionComponent.class);
-        for (int i = 0; i < keyPositions.size(); i++) {
-            if (keyCollected.get(i)) continue;
-            Vector2 kp = keyPositions.get(i);
-            float dx = (pp.x + 32) - (kp.x + 32);
-            float dy = (pp.y + 32) - (kp.y + 32);
+        for (int i = 0; i < itemPositions.size(); i++) {
+            if (itemCollected.get(i)) continue;
+            Vector2 ip = itemPositions.get(i);
+            float dx = (pp.x + 32) - (ip.x + 32);
+            float dy = (pp.y + 32) - (ip.y + 32);
             if (dx * dx + dy * dy < 40 * 40) {
-                keyCollected.set(i, true);
-                keysCollected++;
+                itemCollected.set(i, true);
+                itemsCollected++;
             }
         }
     }
 
     private void checkExit() {
-        if (keysCollected < Constants.TOTAL_KEYS) return;
+        if (itemsCollected < Constants.TOTAL_ITEMS) return;
         PositionComponent pp = player.getComponent(PositionComponent.class);
         Rectangle pr = new Rectangle(pp.x + 12, pp.y + 12, 40, 40);
         Rectangle er = new Rectangle(exitPos.x, exitPos.y, 64, 64);
         if (pr.overlaps(er)) {
             if (level < 3) {
                 game.saveManager.save(level + 1, 0, lives);
-                if (level == 1) {
-                    game.setScreen(new Level2IntroScreen(game));
-                } else if (level == 2) {
-                    game.setScreen(new Level3IntroScreen(game));
-                } else {
-                    game.setScreen(new GameScreen(game, level + 1, 0, lives));
+                switch (level) {
+                    case 1:
+                        game.setScreen(new Level2IntroScreen(game));
+                        break;
+                    case 2:
+                        game.setScreen(new Level3IntroScreen(game));
+                        break;
+                    default:
+                        game.setScreen(new GameScreen(game, level + 1, 0, lives));
+                        break;
                 }
                 dispose();
             } else {

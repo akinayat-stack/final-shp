@@ -45,14 +45,14 @@ public class RenderSystem extends EntitySystem {
         screen.game.batch.begin();
         screen.mapRenderer.render(screen.game.batch, screen.worldCam, screen);
 
-        // Ключи
-        Texture keyTex = screen.game.assets.get("key.png", Texture.class);
-        float bob = (float) Math.sin(screen.keyBobTime * Constants.KEY_BOB_SPEED) * Constants.KEY_BOB_AMPLITUDE;
-        float keyOff = (Constants.TILE_SIZE - Constants.KEY_SIZE) / 2f;
-        for (int i = 0; i < screen.keyPositions.size(); i++) {
-            if (screen.keyCollected.get(i)) continue;
-            Vector2 kp = screen.keyPositions.get(i);
-            screen.game.batch.draw(keyTex, kp.x + keyOff, kp.y + keyOff + bob, Constants.KEY_SIZE, Constants.KEY_SIZE);
+        // Предметы уровня
+        Texture itemTex = screen.itemTexture;
+        float bob = (float) Math.sin(screen.itemBobTime * Constants.KEY_BOB_SPEED) * Constants.KEY_BOB_AMPLITUDE;
+        float off = (Constants.TILE_SIZE - Constants.KEY_SIZE) / 2f;
+        for (int i = 0; i < screen.itemPositions.size(); i++) {
+            if (screen.itemCollected.get(i)) continue;
+            Vector2 pos = screen.itemPositions.get(i);
+            screen.game.batch.draw(itemTex, pos.x + off, pos.y + off + bob, Constants.KEY_SIZE, Constants.KEY_SIZE);
         }
 
         // Сортировка по Y
@@ -198,7 +198,8 @@ public class RenderSystem extends EntitySystem {
         screen.game.batch.setColor(Color.WHITE);
         screen.game.font.setColor(Color.GOLD);
         screen.game.font.draw(screen.game.batch,
-            "KEYS: " + screen.keysCollected + " / " + Constants.TOTAL_KEYS, 340, 470);
+            screen.currentItemType.label + ": " + screen.itemsCollected + " / " + Constants.TOTAL_ITEMS,
+            340, 470);
         screen.game.font.setColor(Color.WHITE);
         screen.game.font.draw(screen.game.batch, "LEVEL: " + screen.level, 700, 470);
         screen.game.batch.end();

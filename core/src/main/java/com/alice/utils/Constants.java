@@ -29,7 +29,7 @@ public final class Constants {
     public static final float KEY_BOB_AMPLITUDE  = 3f;
     public static final float VIEWPORT_W         = 800f;
     public static final float VIEWPORT_H         = 480f;
-    public static final int   TOTAL_KEYS         = 3;
+    public static final int   TOTAL_ITEMS        = 3;
 
     private Constants() {}
 }

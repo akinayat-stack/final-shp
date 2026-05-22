@@ -49,7 +49,7 @@ public class MapRenderer {
             }
         }
 
-        if (screen.keysCollected >= Constants.TOTAL_KEYS && screen.exitPos != null) {
+        if (screen.itemsCollected >= Constants.TOTAL_ITEMS && screen.exitPos != null) {
             float px = screen.exitPos.x;
             float py = screen.exitPos.y;
             float halfW = Constants.VIEWPORT_W / 2f;
