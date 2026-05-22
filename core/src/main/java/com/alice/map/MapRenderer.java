@@ -13,17 +13,17 @@ public class MapRenderer {
     private final int cols;
     private final Texture floorTex;
     private final Texture wallTex;
-    private final Texture bushTex;
     private final Texture portalTex;
 
-    public MapRenderer(AssetManager assets, int[][] map) {
+    public MapRenderer(AssetManager assets, int[][] map, int level) {
         this.map = map;
         this.rows = map.length;
         this.cols = map[0].length;
-        this.floorTex = assets.get("floor.png", Texture.class);
-        this.wallTex = assets.get("wall.png", Texture.class);
-        this.bushTex = assets.get("bush_tile.png", Texture.class);
-        this.portalTex = assets.get("portal.png", Texture.class);
+
+        String suffix = (level == 1) ? "" : String.valueOf(level);
+        this.floorTex = assets.get("floor" + suffix + ".png", Texture.class);
+        this.wallTex = assets.get("wall" + suffix + ".png", Texture.class);
+        this.portalTex = assets.get("portal" + suffix + ".png", Texture.class);
     }
 
     public void render(SpriteBatch batch, OrthographicCamera cam, GameScreen screen) {
@@ -45,8 +45,6 @@ public class MapRenderer {
 
                 if (tile == 1) {
                     batch.draw(wallTex, x, y, Constants.TILE_SIZE, Constants.TILE_SIZE);
-                } else if (tile == 4) {
-                    batch.draw(bushTex, x, y, Constants.TILE_SIZE, Constants.TILE_SIZE);
                 }
             }
         }

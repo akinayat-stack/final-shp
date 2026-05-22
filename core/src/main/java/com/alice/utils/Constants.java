@@ -21,7 +21,6 @@ public final class Constants {
 
     public static final float DETECTION_RADIUS    = 170f;
     public static final float VALET_DETECT_RADIUS = 240f;
-    public static final float BUSH_DETECT_MULT    = 0.5f;
 
     public static final int   PLAYER_LIVES       = 3;
     public static final float INVINCIBILITY_TIME = 2f;

@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
         hudCam = new OrthographicCamera();
         hudCam.setToOrtho(false, Constants.VIEWPORT_W, Constants.VIEWPORT_H);
         map = MapData.getLevel(level);
-        mapRenderer = new MapRenderer(game.assets, map);
+        mapRenderer = new MapRenderer(game.assets, map, level);
         loadEntities();
         engine.addSystem(new CollisionSystem(map, this));
         engine.addSystem(new AISystem(this));
@@ -159,7 +159,13 @@ public class GameScreen implements Screen {
         if (pr.overlaps(er)) {
             if (level < 3) {
                 game.saveManager.save(level + 1, 0, lives);
-                game.setScreen(new GameScreen(game, level + 1, 0, lives));
+                if (level == 1) {
+                    game.setScreen(new Level2IntroScreen(game));
+                } else if (level == 2) {
+                    game.setScreen(new Level3IntroScreen(game));
+                } else {
+                    game.setScreen(new GameScreen(game, level + 1, 0, lives));
+                }
                 dispose();
             } else {
                 game.saveManager.reset();

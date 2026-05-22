@@ -66,20 +66,8 @@ public class AISystem extends IteratingSystem {
         float dy = py - cy;
         float dist = (float) Math.sqrt(dx * dx + dy * dy);
         float radius = s.detectRadius;
-        if (isPlayerInBush(pp)) radius *= Constants.BUSH_DETECT_MULT;
         if (dist > radius) return false;
         return !rayBlocked(cx, cy, px, py);
-    }
-
-    private boolean isPlayerInBush(PositionComponent pp) {
-        int[][] map = screen.map;
-        int rows = map.length;
-        int cols = map[0].length;
-        int col = (int) ((pp.x + 32) / Constants.TILE_SIZE);
-        int row = (int) ((pp.y + 32) / Constants.TILE_SIZE);
-        int mapRow = rows - 1 - row;
-        if (col < 0 || col >= cols || mapRow < 0 || mapRow >= rows) return false;
-        return map[mapRow][col] == 4;
     }
 
     private boolean rayBlocked(float x1, float y1, float x2, float y2) {

@@ -42,17 +42,27 @@ public class AliceGame extends Game {
         assets.load("bg_menu.png",   Texture.class);
         assets.load("heart.png",     Texture.class);
         assets.load("key.png",       Texture.class);
-        assets.load("bush_tile.png", Texture.class);
         assets.load("floor.png",     Texture.class);
         assets.load("wall.png",      Texture.class);
         assets.load("portal.png",    Texture.class);
+        assets.load("floor2.png",    Texture.class);
+        assets.load("wall2.png",     Texture.class);
+        assets.load("portal2.png",   Texture.class);
         assets.load("game_over.png", Texture.class);
         assets.load("try_again.png", Texture.class);
+        assets.load("play_again.png", Texture.class);
         assets.load("main_menu.png", Texture.class);
         assets.load("new_game.png",  Texture.class);
         assets.load("exit.png",      Texture.class);
         assets.load("level1.png",    Texture.class);
         assets.load("play.png",      Texture.class);
+        assets.load("level2.png",    Texture.class);
+        assets.load("play2.png",     Texture.class);
+        assets.load("level3.png",    Texture.class);
+        assets.load("play3.png",     Texture.class);
+        assets.load("floor3.png",    Texture.class);
+        assets.load("wall3.png",     Texture.class);
+        assets.load("portal3.png",   Texture.class);
         assets.load("victory.png",   Texture.class);
         assets.finishLoading();
     }

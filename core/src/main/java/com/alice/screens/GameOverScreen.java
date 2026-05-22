@@ -95,12 +95,7 @@ public class GameOverScreen implements Screen {
         // Обработка кликов
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             if (btnRetry.contains(mouseWorld.x, mouseWorld.y)) {
-                if (level == 1) {
-                    game.setScreen(new Level1IntroScreen(game));
-                } else {
-                    game.setScreen(new GameScreen(game, level, 0, Constants.PLAYER_LIVES));
-                }
-                dispose();
+                retryLevel();
                 return;
             } else if (btnMenu.contains(mouseWorld.x, mouseWorld.y)) {
                 game.setScreen(new MenuScreen(game));
@@ -111,16 +106,29 @@ public class GameOverScreen implements Screen {
 
         // Клавиши
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            if (level == 1) {
-                game.setScreen(new Level1IntroScreen(game));
-            } else {
-                game.setScreen(new GameScreen(game, level, 0, Constants.PLAYER_LIVES));
-            }
-            dispose();
+            retryLevel();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             game.setScreen(new MenuScreen(game));
             dispose();
         }
+    }
+
+    private void retryLevel() {
+        switch (level) {
+            case 1:
+                game.setScreen(new Level1IntroScreen(game));
+                break;
+            case 2:
+                game.setScreen(new Level2IntroScreen(game));
+                break;
+            case 3:
+                game.setScreen(new Level3IntroScreen(game));
+                break;
+            default:
+                game.setScreen(new GameScreen(game, level, 0, Constants.PLAYER_LIVES));
+                break;
+        }
+        dispose();
     }
 
     @Override
