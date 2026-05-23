@@ -10,6 +10,7 @@ public final class Constants {
     public static final float VALET_SIZE       = 80f;
     public static final float VALET_COLLISION  = 64f;
     public static final float KEY_SIZE         = 40f;
+    public static final float POTION_SIZE      = 28f;
     public static final float HEART_SIZE       = 40f;
 
     public static final float PLAYER_SPEED       = 140f;
@@ -21,6 +22,8 @@ public final class Constants {
 
     public static final float DETECTION_RADIUS    = 170f;
     public static final float VALET_DETECT_RADIUS = 240f;
+    public static final float INVISIBILITY_DURATION = 10f;
+    public static final int   ELIXIR_TILE           = 5;
 
     public static final int   PLAYER_LIVES       = 3;
     public static final float INVINCIBILITY_TIME = 2f;

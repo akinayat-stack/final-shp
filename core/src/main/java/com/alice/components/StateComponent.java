@@ -1,11 +1,11 @@
 package com.alice.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class StateComponent implements Component, Pool.Poolable {
     public enum State { IDLE, WALK, PATROL, CHASE, RETURN }
@@ -17,6 +17,8 @@ public class StateComponent implements Component, Pool.Poolable {
     public boolean isPlayer = false;
     public boolean isGuard = false;
     public boolean isValet = false;
+    public boolean invisible = false;
+    public float invisibleTimer = 0f;
     public float detectRadius = 150f;
     public float chaseSpeed = 90f;
     public float patrolSpeed = 60f;
@@ -39,6 +41,8 @@ public class StateComponent implements Component, Pool.Poolable {
         isPlayer = false;
         isGuard = false;
         isValet = false;
+        invisible = false;
+        invisibleTimer = 0f;
         detectRadius = 150f;
         chaseSpeed = 90f;
         patrolSpeed = 60f;

@@ -48,11 +48,18 @@ public class RenderSystem extends EntitySystem {
         // Предметы уровня
         Texture itemTex = screen.itemTexture;
         float bob = (float) Math.sin(screen.itemBobTime * Constants.KEY_BOB_SPEED) * Constants.KEY_BOB_AMPLITUDE;
-        float off = (Constants.TILE_SIZE - Constants.KEY_SIZE) / 2f;
+        float offKey = (Constants.TILE_SIZE - Constants.KEY_SIZE) / 2f;
+        float offPotion = (Constants.TILE_SIZE - Constants.POTION_SIZE) / 2f;
         for (int i = 0; i < screen.itemPositions.size(); i++) {
             if (screen.itemCollected.get(i)) continue;
             Vector2 pos = screen.itemPositions.get(i);
-            screen.game.batch.draw(itemTex, pos.x + off, pos.y + off + bob, Constants.KEY_SIZE, Constants.KEY_SIZE);
+            screen.game.batch.draw(itemTex, pos.x + offKey, pos.y + offKey + bob, Constants.KEY_SIZE, Constants.KEY_SIZE);
+        }
+
+        for (int i = 0; i < screen.potionPositions.size(); i++) {
+            if (screen.potionCollected.get(i)) continue;
+            Vector2 pos = screen.potionPositions.get(i);
+            screen.game.batch.draw(screen.potionTex, pos.x + offPotion, pos.y + offPotion + bob, Constants.POTION_SIZE, Constants.POTION_SIZE);
         }
 
         // Сортировка по Y

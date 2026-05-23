@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alice.AliceGame;
 import com.alice.components.PositionComponent;
+import com.alice.components.StateComponent;
 import com.alice.entities.Player;
 import com.alice.entities.Valet;
 import com.alice.map.MapData;
@@ -37,12 +38,15 @@ public class GameScreen implements Screen {
     public int level;
     public ItemType currentItemType;
     public Texture itemTexture;
+    public Texture potionTex;
     public int itemsCollected;
     public int lives;
     public int[][] map;
     public Vector2 exitPos = new Vector2();
     public List<Vector2> itemPositions = new ArrayList<>();
     public List<Boolean> itemCollected = new ArrayList<>();
+    public List<Vector2> potionPositions = new ArrayList<>();
+    public List<Boolean> potionCollected = new ArrayList<>();
     // guards убраны — на всех уровнях только valet
     public List<Entity> guards = new ArrayList<>();  // оставляем пустым для совместимости с RenderSystem
     public Entity valet;
@@ -69,6 +73,7 @@ public class GameScreen implements Screen {
             default: currentItemType = ItemType.KEY;
         }
         itemTexture = game.assets.get(currentItemType.texturePath, Texture.class);
+        potionTex = game.assets.get("potion.png", Texture.class);
         mapRenderer = new MapRenderer(game.assets, map, level);
         loadEntities();
         engine.addSystem(new CollisionSystem(map, this));
@@ -89,6 +94,10 @@ public class GameScreen implements Screen {
                     case 2:
                         itemPositions.add(new Vector2(wx, wy));
                         itemCollected.add(false);
+                        break;
+                    case Constants.ELIXIR_TILE:
+                        potionPositions.add(new Vector2(wx, wy));
+                        potionCollected.add(false);
                         break;
                     case 3:
                         exitPos.set(wx, wy);
@@ -138,8 +147,10 @@ public class GameScreen implements Screen {
 
         if (!paused) {
             itemBobTime += delta;
-            engine.update(delta);
             checkItemPickup();
+            checkPotionPickup();
+            updatePotionTimer(delta);
+            engine.update(delta);
             checkExit();
             checkGameOver();
         } else {
@@ -159,6 +170,32 @@ public class GameScreen implements Screen {
                 itemCollected.set(i, true);
                 itemsCollected++;
             }
+        }
+    }
+
+    private void checkPotionPickup() {
+        PositionComponent pp = player.getComponent(PositionComponent.class);
+        for (int i = 0; i < potionPositions.size(); i++) {
+            if (potionCollected.get(i)) continue;
+            Vector2 pos = potionPositions.get(i);
+            float dx = (pp.x + 32) - (pos.x + 32);
+            float dy = (pp.y + 32) - (pos.y + 32);
+            if (dx * dx + dy * dy < 40 * 40) {
+                potionCollected.set(i, true);
+                StateComponent state = player.getComponent(StateComponent.class);
+                state.invisible = true;
+                state.invisibleTimer = Constants.INVISIBILITY_DURATION;
+            }
+        }
+    }
+
+    private void updatePotionTimer(float delta) {
+        StateComponent state = player.getComponent(StateComponent.class);
+        if (!state.invisible) return;
+        state.invisibleTimer -= delta;
+        if (state.invisibleTimer <= 0f) {
+            state.invisible = false;
+            state.invisibleTimer = 0f;
         }
     }
 

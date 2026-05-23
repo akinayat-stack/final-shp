@@ -35,6 +35,11 @@ public class AISystem extends IteratingSystem {
 
         PositionComponent ep = entity.getComponent(PositionComponent.class);
         PositionComponent pp = screen.player.getComponent(PositionComponent.class);
+        StateComponent playerState = screen.player.getComponent(StateComponent.class);
+        if (playerState.invisible && s.current == StateComponent.State.CHASE) {
+            s.current = StateComponent.State.RETURN;
+            s.lostSightTimer = 0f;
+        }
         boolean detected = canDetectPlayer(ep, pp, s);
 
         if (detected) {
@@ -58,6 +63,9 @@ public class AISystem extends IteratingSystem {
     }
 
     private boolean canDetectPlayer(PositionComponent ep, PositionComponent pp, StateComponent s) {
+        StateComponent playerState = screen.player.getComponent(StateComponent.class);
+        if (playerState.invisible) return false;
+
         float cx = ep.x + 32;
         float cy = ep.y + 32;
         float px = pp.x + 32;
